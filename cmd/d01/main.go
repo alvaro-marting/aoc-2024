@@ -1,20 +1,17 @@
 package main
 
 import (
-	"io"
 	"log"
 	"math"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/alvaro-marting/aoc-2024/pkg"
 )
 
 func main() {
-	f := mustOpenFile("./input.txt")
-	defer f.Close()
-
-	s := mustReadFile(f)
+	s := pkg.MustReadFile(".inputs/01.txt")
 
 	lines := strings.Split(s, "\n")
 	loc1, loc2 := make([]int, len(lines)), make([]int, len(lines))
@@ -48,22 +45,6 @@ func main() {
 
 	println(int(sum))
 
-}
-
-func mustOpenFile(filename string) *os.File {
-	f, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return f
-}
-
-func mustReadFile(f *os.File) string {
-	b, err := io.ReadAll(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(b)
 }
 
 func splitLines(s string) []string {
