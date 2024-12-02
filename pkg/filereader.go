@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 func mustOpenFile(filename string) *os.File {
@@ -22,4 +23,8 @@ func MustReadFile(filename string) string {
 		log.Fatal(err)
 	}
 	return string(b)
+}
+
+func MustReadFileLines(filename string) []string {
+	return strings.Split(MustReadFile(filename), "\n")
 }
