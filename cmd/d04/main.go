@@ -12,7 +12,7 @@ func main() {
 	lines := pkg.MustReadFileLines("./inputs/02.txt")
 	// Each line is a report
 	// Safe if only decreasing or increasing
-	// Safe if the difference is max 3
+	// Safe if the difference is max 3, min 1
 	safes := 0
 	for _, line := range lines {
 		if line == "" {
