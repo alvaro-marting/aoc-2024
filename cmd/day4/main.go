@@ -37,6 +37,13 @@ func (x *xmasSearch) restart() {
 	x.currentRune = 'X'
 }
 
+var diagonals = []coord{
+	{1, 1},
+	{-1, -1},
+	{1, -1},
+	{-1, 1},
+}
+
 var directions = []coord{
 	{1, 0},
 	{0, 1},
@@ -62,6 +69,7 @@ func main() {
 	s := pkg.MustReadFileLines("./inputs/04.txt")
 
 	fmt.Println(task1(s))
+	fmt.Println(task2(s))
 }
 
 func task1(s []string) int {
@@ -105,6 +113,51 @@ func task1(s []string) int {
 			}
 
 		}
+	}
+
+	return xmasCount
+}
+
+func task2(s []string) int {
+	apos := []coord{}
+	graph := make([][]rune, 0, len(s))
+	for j, line := range s {
+		if line == "" {
+			continue
+		}
+		graph = append(graph, []rune(line))
+		for i, char := range line {
+			if i == 0 || j == 0 || i == len(line)-1 || j == len(line)-1 { // Assumption that the graph is square
+				continue
+			}
+			if char == 'A' {
+				apos = append(apos, coord{i, len(graph) - 1})
+			}
+		}
+	}
+
+	xmasCount := 0
+
+	for _, coord := range apos {
+
+		newCoord1 := coord.nextCoord(diagonals[0])
+		newCoord2 := coord.nextCoord(diagonals[1])
+		newCoord3 := coord.nextCoord(diagonals[2])
+		newCoord4 := coord.nextCoord(diagonals[3])
+
+		if !((graph[newCoord1.y][newCoord1.x] == 'M' &&
+			graph[newCoord2.y][newCoord2.x] == 'S') ||
+			(graph[newCoord1.y][newCoord1.x] == 'S' &&
+				graph[newCoord2.y][newCoord2.x] == 'M')) {
+			continue
+		}
+		if !((graph[newCoord3.y][newCoord3.x] == 'M' &&
+			graph[newCoord4.y][newCoord4.x] == 'S') ||
+			(graph[newCoord3.y][newCoord3.x] == 'S' &&
+				graph[newCoord4.y][newCoord4.x] == 'M')) {
+			continue
+		}
+		xmasCount++
 	}
 
 	return xmasCount
