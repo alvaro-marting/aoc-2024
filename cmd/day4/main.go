@@ -6,55 +6,6 @@ import (
 	"github.com/alvaro-marting/aoc-2024/pkg"
 )
 
-type coord struct {
-	x, y int
-}
-
-func (c coord) nextCoord(c1 coord) coord {
-	return coord{
-		x: c.x + c1.x,
-		y: c.y + c1.y,
-	}
-}
-
-type xmasSearch struct {
-	currentRune rune
-	coord       coord
-}
-
-func (x *xmasSearch) nextCoord(addx, addy int) coord {
-	return coord{
-		x: x.coord.x + addx,
-		y: x.coord.y + addy,
-	}
-}
-
-func (x *xmasSearch) nextRune() (rune, bool) {
-	r, ok := nextRune[x.currentRune]
-	return r, ok
-}
-func (x *xmasSearch) restart() {
-	x.currentRune = 'X'
-}
-
-var diagonals = []coord{
-	{1, 1},
-	{-1, -1},
-	{1, -1},
-	{-1, 1},
-}
-
-var directions = []coord{
-	{1, 0},
-	{0, 1},
-	{-1, 0},
-	{0, -1},
-	{1, 1},
-	{-1, 1},
-	{1, -1},
-	{-1, -1},
-}
-
 var nextRune = map[rune]rune{
 	'X': 'M',
 	'M': 'A',
@@ -73,7 +24,7 @@ func main() {
 }
 
 func task1(s []string) int {
-	xpos := []coord{}
+	xpos := []pkg.Coord{}
 	graph := make([][]rune, 0, len(s))
 	for _, line := range s {
 		if line == "" {
@@ -82,7 +33,7 @@ func task1(s []string) int {
 		graph = append(graph, []rune(line))
 		for i, char := range line {
 			if char == 'X' {
-				xpos = append(xpos, coord{i, len(graph) - 1})
+				xpos = append(xpos, pkg.Coord{X: i, Y: len(graph) - 1})
 			}
 		}
 	}
@@ -90,9 +41,9 @@ func task1(s []string) int {
 	xmasCount := 0
 
 	for _, coord := range xpos {
-		for _, dir := range directions {
+		for _, dir := range pkg.Directions {
 			currentRune := 'X'
-			newCoord := coord.nextCoord(dir)
+			newCoord := coord.NextCoord(dir)
 			// While this direction is valid
 			for {
 				nextRune, ok := nextRune[currentRune]
@@ -101,15 +52,15 @@ func task1(s []string) int {
 					currentRune = 'X'
 					break
 				}
-				if newCoord.x < 0 || newCoord.y < 0 || newCoord.y >= len(graph) || newCoord.x >= len(graph[newCoord.y]) {
+				if newCoord.X < 0 || newCoord.Y < 0 || newCoord.Y >= len(graph) || newCoord.X >= len(graph[newCoord.Y]) {
 					break
 				}
-				if graph[newCoord.y][newCoord.x] != nextRune {
+				if graph[newCoord.Y][newCoord.X] != nextRune {
 					currentRune = 'X'
 					break
 				}
 				currentRune = nextRune
-				newCoord = newCoord.nextCoord(dir)
+				newCoord = newCoord.NextCoord(dir)
 			}
 
 		}
@@ -119,7 +70,7 @@ func task1(s []string) int {
 }
 
 func task2(s []string) int {
-	apos := []coord{}
+	apos := []pkg.Coord{}
 	graph := make([][]rune, 0, len(s))
 	for j, line := range s {
 		if line == "" {
@@ -131,7 +82,7 @@ func task2(s []string) int {
 				continue
 			}
 			if char == 'A' {
-				apos = append(apos, coord{i, len(graph) - 1})
+				apos = append(apos, pkg.Coord{X: i, Y: len(graph) - 1})
 			}
 		}
 	}
@@ -140,21 +91,21 @@ func task2(s []string) int {
 
 	for _, coord := range apos {
 
-		newCoord1 := coord.nextCoord(diagonals[0])
-		newCoord2 := coord.nextCoord(diagonals[1])
-		newCoord3 := coord.nextCoord(diagonals[2])
-		newCoord4 := coord.nextCoord(diagonals[3])
+		newCoord1 := coord.NextCoord(pkg.Diagonals[0])
+		newCoord2 := coord.NextCoord(pkg.Diagonals[1])
+		newCoord3 := coord.NextCoord(pkg.Diagonals[2])
+		newCoord4 := coord.NextCoord(pkg.Diagonals[3])
 
-		if !((graph[newCoord1.y][newCoord1.x] == 'M' &&
-			graph[newCoord2.y][newCoord2.x] == 'S') ||
-			(graph[newCoord1.y][newCoord1.x] == 'S' &&
-				graph[newCoord2.y][newCoord2.x] == 'M')) {
+		if !((graph[newCoord1.Y][newCoord1.X] == 'M' &&
+			graph[newCoord2.Y][newCoord2.X] == 'S') ||
+			(graph[newCoord1.Y][newCoord1.X] == 'S' &&
+				graph[newCoord2.Y][newCoord2.X] == 'M')) {
 			continue
 		}
-		if !((graph[newCoord3.y][newCoord3.x] == 'M' &&
-			graph[newCoord4.y][newCoord4.x] == 'S') ||
-			(graph[newCoord3.y][newCoord3.x] == 'S' &&
-				graph[newCoord4.y][newCoord4.x] == 'M')) {
+		if !((graph[newCoord3.Y][newCoord3.X] == 'M' &&
+			graph[newCoord4.Y][newCoord4.X] == 'S') ||
+			(graph[newCoord3.Y][newCoord3.X] == 'S' &&
+				graph[newCoord4.Y][newCoord4.X] == 'M')) {
 			continue
 		}
 		xmasCount++
